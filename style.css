@@ -18,18 +18,18 @@ body {
   background-color: var(--bg);
   color: var(--text);
   padding: 16px;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 .container {
-  max-width: 600px;
+  max-width: 650px;
   margin: 0 auto;
 }
 
 header {
   text-align: center;
   margin-bottom: 20px;
-  padding: 16px;
+  padding: 18px;
   background: linear-gradient(135deg, var(--primary), var(--secondary));
   color: white;
   border-radius: 12px;
@@ -43,7 +43,7 @@ header h1 {
 
 .card {
   background: var(--card-bg);
-  padding: 18px;
+  padding: 20px;
   border-radius: 12px;
   margin-bottom: 16px;
   border: 1px solid var(--border);
@@ -79,18 +79,18 @@ button:hover {
 }
 
 .location-btn {
-  background-color: #48bb78;
+  background-color: #38a169;
 }
 
 .location-btn:hover {
-  background-color: #38a169;
+  background-color: #2f855a;
 }
 
 .data-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
-  margin-top: 12px;
+  margin-top: 14px;
 }
 
 .data-box {
@@ -108,14 +108,14 @@ button:hover {
 }
 
 .data-box p {
-  font-size: 1.25rem;
+  font-size: 1.3rem;
   font-weight: bold;
   color: var(--primary);
 }
 
 .status-badge {
   display: inline-block;
-  padding: 6px 12px;
+  padding: 6px 14px;
   border-radius: 20px;
   font-size: 0.9rem;
   font-weight: bold;
@@ -127,12 +127,71 @@ button:hover {
 .status-danger { background: #fed7d7; color: #742a2a; }
 
 .advice-box {
-  margin-top: 12px;
-  padding: 12px;
+  margin-top: 14px;
+  padding: 14px;
   background: #ebf8ff;
   border-left: 4px solid var(--secondary);
   border-radius: 4px;
   font-size: 0.95rem;
+}
+
+.ai-justification {
+  margin-top: 14px;
+  padding: 12px;
+  background: #fdf6b2;
+  border-left: 4px solid #d97706;
+  border-radius: 4px;
+  font-size: 0.88rem;
+  color: #78350f;
+}
+
+.ai-justification h4 {
+  margin-bottom: 4px;
+  font-size: 0.9rem;
+}
+
+.info-card h3 {
+  font-size: 1.05rem;
+  color: #1e293b;
+  margin-bottom: 8px;
+}
+
+.info-list {
+  padding-left: 18px;
+  font-size: 0.9rem;
+  color: #475569;
+}
+
+.info-list li {
+  margin-bottom: 6px;
+}
+
+.reliability-text {
+  font-size: 0.9rem;
+  color: #334155;
+  background: #f1f5f9;
+  padding: 10px;
+  border-radius: 6px;
+  margin-top: 8px;
+}
+
+.disclaimer-text {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-top: 8px;
+  display: block;
+}
+
+footer {
+  text-align: center;
+  margin-top: 24px;
+  padding: 16px;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+footer strong {
+  color: var(--primary);
 }
 
 .hidden {
