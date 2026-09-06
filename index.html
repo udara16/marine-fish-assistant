@@ -18,8 +18,7 @@
     <div class="card">
       <label for="areaSelect">ප්‍රදේශය තෝරන්න:</label>
       <select id="areaSelect">
-        <option value="">ප්‍රදේශ පූරණය වෙමින් පවතී...</option>
-      </select>
+        </select>
       <button onclick="fetchWeatherData()">තොරතුරු ලබාගන්න</button>
       <button class="location-btn" onclick="getMyLocation()">📍 මගේ වත්මන් ස්ථානය බලන්න (Live GPS)</button>
     </div>
@@ -94,6 +93,17 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
   
   <script>
+    // දත්ත ගොනුව වෙනුවට මෙහි සෘජුවම ලංකාවේ ප්‍රධාන ධීවර කලාප ඇතුළත් කර ඇත
+    const coastalLocations = [
+      { name: "කොළඹ / මීගමුව අවට (Western Coast)", lat: 6.9271, lon: 79.8612 },
+      { name: "ගාල්ල / මාතර අවට (Southern Coast)", lat: 6.0535, lon: 80.2210 },
+      { name: "ත්‍රිකුණාමලය අවට (Eastern Coast)", lat: 8.5874, lon: 81.2152 },
+      { name: "යාපනය / පේදුරුතුඩුව (Northern Coast)", lat: 9.6615, lon: 80.0255 },
+      { name: "මඩකලපුව / වාකරේ අවට", lat: 7.7170, lon: 81.7000 },
+      { name: "හම්බන්තොට / තංගල්ල අවට", lat: 6.1248, lon: 81.1185 },
+      { name: "කල්පිටිය / පුත්තලම අවට (North-West)", lat: 8.0362, lon: 79.8283 }
+    ];
+
     let map = null;
     let marker = null;
     let circle = null;
@@ -122,26 +132,20 @@
       marker.bindPopup(`<b>කලාපය:</b> Lat: ${lat}, Lon: ${lon}`).openPopup();
     }
 
-    async function loadLocations() {
+    function loadLocations() {
       initMap();
-      try {
-        const res = await fetch('locations.json');
-        const locations = await res.json();
-        const select = document.getElementById('areaSelect');
-        select.innerHTML = '';
-        
-        locations.forEach(loc => {
-          const opt = document.createElement('option');
-          opt.value = `${loc.lat},${loc.lon}`;
-          opt.textContent = loc.name;
-          select.appendChild(opt);
-        });
+      const select = document.getElementById('areaSelect');
+      select.innerHTML = '';
+      
+      coastalLocations.forEach(loc => {
+        const opt = document.createElement('option');
+        opt.value = `${loc.lat},${loc.lon}`;
+        opt.textContent = loc.name;
+        select.appendChild(opt);
+      });
 
-        fetchWeatherData();
-      } catch (err) {
-        console.error("Error loading locations.json:", err);
-        getWeatherData(6.9271, 79.8612);
-      }
+      // ප්‍රථම ප්‍රදේශය සඳහා දත්ත ලබාගැනීම පූරණය කරයි
+      fetchWeatherData();
     }
 
     async function getWeatherData(lat, lon) {
