@@ -23,6 +23,7 @@
       <button class="location-btn" onclick="getMyLocation()">📍 මගේ වත්මන් ස්ථානය බලන්න (Live GPS)</button>
     </div>
 
+    <!-- Live Marine Map -->
     <div class="card">
       <div class="map-header">
         <h3>🗺️ සජීවී සමුද්‍ර සිතියම (Live Marine Map)</h3>
@@ -31,6 +32,7 @@
       <div id="map"></div>
     </div>
 
+    <!-- Results Section -->
     <div id="resultCard" class="card hidden">
       <h2>සමුද්‍ර තත්ත්ව වාර්තාව</h2>
       <div id="safetyBadge" class="status-badge"></div>
@@ -66,8 +68,9 @@
         <p id="speciesText">විශ්ලේෂණය කරමින්...</p>
       </div>
 
+      <!-- ඉදිරි දින 7 ක අනාවැකි වගුව -->
       <div class="forecast-section" style="margin-top: 20px;">
-        <h3>📅 ඉදිරි දින 14 ක කාලගුණ සහ මත්ස්‍ය අනාවැකිය (2-Week Forecast)</h3>
+        <h3>📅 ඉදිරි දින 7 ක කාලගුණ සහ මත්ස්‍ය අනාවැකිය (7-Day Forecast)</h3>
         <div class="table-responsive" style="overflow-x: auto; margin-top: 10px;">
           <table id="forecastTable" style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
             <thead>
@@ -168,9 +171,8 @@
       document.getElementById('forecastTableBody').innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 10px;">දත්ත පූරණය වෙමින්...</td></tr>`;
 
       try {
-        // දින 14 ක (forecast_days=14) දත්ත ඉල්ලීම සඳහා URL සකස් කර ඇත
-        const marineUrl = `https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&current=wave_height,wave_period&daily=wave_height_max&forecast_days=14&timezone=auto`;
-        const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,surface_pressure&daily=wind_speed_10m_max&forecast_days=14&timezone=auto`;
+        const marineUrl = `https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&current=wave_height,wave_period&daily=wave_height_max&forecast_days=7&timezone=auto`;
+        const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,surface_pressure&daily=wind_speed_10m_max&forecast_days=7&timezone=auto`;
 
         const [marineRes, weatherRes] = await Promise.all([
           fetch(marineUrl).then(res => res.json()),
@@ -187,7 +189,7 @@
         document.getElementById('seaTemp').innerText = `${temp} °C`;
         document.getElementById('pressure').innerText = `${pressure} hPa`;
 
-        document.getElementById('validityNote').innerHTML = `⏳ <strong>වලංගු කාලය:</strong> මෙම තත්‍ය කාලීන වාර්තාව ඉදිරි පැය 24 සඳහා සම්පූර්ණයෙන්ම වලංගු වේ. (ඉදිරි දින 14 ක පුරෝකථන පහත වගුවේ දැක්වේ)`;
+        document.getElementById('validityNote').innerHTML = `⏳ <strong>වලංගු කාලය:</strong> මෙම තත්‍ය කාලීන වාර්තාව ඉදිරි පැය 24 සඳහා සම්පූර්ණයෙන්ම වලංගු වේ. (ඉදිරි දින 7 ක පුරෝකථන පහත වගුවේ දැක්වේ)`;
 
         evaluateConditions(wave, wind, pressure, temp, lat, lon);
         renderForecastTable(marineRes.daily, weatherRes.daily);
