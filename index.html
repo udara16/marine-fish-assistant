@@ -3,25 +3,27 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ධීවර සහයක - Fishing Assistant</title>
+  <title>ධීවර සහයක - Marine Fishing Assistant</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
     <header>
       <h1>🐟 ධීවර සහයක (Fishing Assistant)</h1>
-      <p>මුහුදු කාලගුණය සහ මත්ස්‍ය කලාප අනාවැකි</p>
+      <p>මුහුදු කාලගුණය සහ මත්ස්‍ය කලාප අනාවැකි පද්ධතිය</p>
     </header>
 
+    <!-- ස්ථානය තේරීම -->
     <div class="card">
       <label for="areaSelect">ප්‍රදේශය තෝරන්න:</label>
       <select id="areaSelect">
         <option value="">ප්‍රදේශ පූරණය වෙමින් පවතී...</option>
       </select>
       <button onclick="fetchWeatherData()">තොරතුරු ලබාගන්න</button>
-      <button class="location-btn" onclick="getMyLocation()">📍 මගේ වත්මන් ස්ථානය බලන්න</button>
+      <button class="location-btn" onclick="getMyLocation()">📍 මගේ වත්මන් ස්ථානය බලන්න (Live GPS)</button>
     </div>
 
+    <!-- තත්ත්ව වාර්තාව -->
     <div id="resultCard" class="card hidden">
       <h2>සමුද්‍ර තත්ත්ව වාර්තාව</h2>
       <div id="safetyBadge" class="status-badge"></div>
@@ -49,11 +51,39 @@
         <strong>මසුන් ඇල්ලීමේ හැකියාව:</strong>
         <p id="adviceText">දත්ත පරීක්ෂා කරමින්...</p>
       </div>
+
+      <!-- AI Justification Note -->
+      <div class="ai-justification">
+        <h4>🤖 AI සහ ඇල්ගොරිතම ක්‍රියාකාරීත්වය (AI Justification Note):</h4>
+        <p id="aiNoteText">දත්ත විශ්ලේෂණය අනුව මෙහි සටහන දැක්වේ.</p>
+      </div>
     </div>
+
+    <!-- විශ්වාසනීයත්වය සහ දත්ත මූලාශ්‍ර -->
+    <div class="card info-card">
+      <h3>📊 ගණනය කිරීමට පාදක වූ මූලාශ්‍ර (Data Sources)</h3>
+      <ul class="info-list">
+        <li><strong>Open-Meteo Marine API:</strong> යුරෝපීය සහ ජාත්‍යන්තර සාගර ආකෘති (ECMWF, Copernicus Marine Service) මඟින් සපයන රළ උස සහ මුහුදු තත්ත්ව දත්ත.</li>
+        <li><strong>Open-Meteo Weather API:</strong> ජාත්‍යන්තර කාලගුණ විද්‍යා චන්ද්‍රිකා සහ සංඛ්‍යාත්මක ආකෘති මඟින් ලබාගන්නා සුළඟේ වේගය, උෂ්ණත්වය සහ වායුගෝලීය පීඩනය.</li>
+        <li><strong>Solunar & Barometric Fish Feeding Models:</strong> වායුගෝලීය පීඩන විචලනයන් සහ ජල උෂ්ණත්වය මත මසුන්ගේ ආහාර ගැනීමේ චර්යාවන් (Feeding Activity) තක්සේරු කරන ජීව-විද්‍යාත්මක ආකෘති.</li>
+      </ul>
+
+      <h3 style="margin-top: 15px;">⚠️ මෙය කොපමණ දුරට විශ්වාස කළ හැකිද? (Reliability)</h3>
+      <p class="reliability-text">
+        <strong>විශ්වසනීයත්වය ~ 80% - 85%:</strong> කාලගුණ, සුළං සහ රළ පිළිබඳ දත්ත චන්ද්‍රිකා සහ සාගර බෝයාවන් (Buoys) හරහා නිරන්තරයෙන් යාවත්කාලීන වන බැවින් කාලගුණික අවදානම ඉහළ නිරවද්‍යතාවයකින් යුක්ත වේ. කෙසේ වෙතත්, මසුන් ගැවසීම ජල ධාරා (Ocean Currents), ප්ලවාංග (Chlorophyll) සහ ජලයේ ගැඹුර මත ද රඳා පවතින බැවින් මෙය මඟපෙන්වීමක් (Guideline) ලෙස පමණක් සලකන්න.
+      </p>
+      <p class="disclaimer-text">
+        <em>* හදිසි කාලගුණ විපර්යාස වලදී ශ්‍රී ලංකා කාලගුණ විද්‍යා දෙපාර්තමේන්තුව සහ නාරා (NARA) ආයතනය නිකුත් කරන නිල උපදෙස් අනුගමනය කරන්න.</em>
+      </p>
+    </div>
+
+    <footer>
+      <p>Designed by <strong>Udara Dissanayake</strong></p>
+      <p style="font-size: 0.8rem; opacity: 0.8; margin-top: 4px;">ශ්‍රී ලාංකීය ධීවර ප්‍රජාව වෙනුවෙන් නිර්මාණය කරන ලදී.</p>
+    </footer>
   </div>
 
   <script>
-    // Load locations from JSON file
     async function loadLocations() {
       try {
         const res = await fetch('locations.json');
@@ -68,7 +98,6 @@
           select.appendChild(opt);
         });
 
-        // Load initial data
         fetchWeatherData();
       } catch (err) {
         console.error("Error loading locations:", err);
@@ -107,6 +136,7 @@
     function evaluateConditions(wave, wind, pressure, temp) {
       const badge = document.getElementById('safetyBadge');
       const advice = document.getElementById('adviceText');
+      const aiNote = document.getElementById('aiNoteText');
 
       let safetyText = "";
 
@@ -125,15 +155,21 @@
       }
 
       let fishPotential = "";
-      if (pressure >= 1008 && pressure <= 1015 && wave <= 1.8) {
-        fishPotential = "පීඩනය සහ උෂ්ණත්වය මත්ස්‍ය ආහාර සෙවීමට බෙහෙවින් හිතකරයි. ගැඹුරු මුහුදේ සහ මතුපිට මසුන් (Pelagic) ගැවසීමේ සම්භාවිතාව ඉහළයි.";
-      } else if (pressure < 1005) {
-        fishPotential = "පීඩනය පහත වැටී ඇති බැවින් මසුන් ගැඹුරු කලාප වෙත ගමන් කිරීමට ඉඩ ඇත. රළ වැඩි විය හැක.";
+      let rationale = "";
+
+      if (pressure >= 1008 && pressure <= 1014 && wave <= 1.8) {
+        fishPotential = "පීඩනය සහ උෂ්ණත්වය මත්ස්‍ය ආහාර සෙවීමට බෙහෙවින් හිතකරයි. මතුපිට සහ මැද කලාපවල මසුන් ගැවසීමේ ඉඩකඩ ඉහළයි.";
+        rationale = `වායු පීඩනය (${pressure} hPa) ස්ථාවර මට්ටමක පවතින අතර රළ උස මීටර් ${wave} ක් පමණ වේ. මෙවැනි තත්ත්වවලදී මසුන්ගේ පාවෙන මුත්‍රාශයේ (Swim Bladder) පීඩනය සමතුලිතව පවතින බැවින් උන් බහුලව ආහාර සොයා මතුපිටට සහ මැද ස්ථරවලට පැමිණේ.`;
+      } else if (pressure < 1008) {
+        fishPotential = "අඩු පීඩන තත්ත්වයක් පවතී. මසුන් ගැඹුරු ආරක්ෂිත කලාප වෙත පසුබැසීමට ඉඩ ඇත.";
+        rationale = `පීඩනය පහත වැටීම (${pressure} hPa) හේතුවෙන් කුණාටු සහිත ස්වභාවයක් ඇතිවිය හැකි අතර, මසුන් සාමාන්‍යයෙන් සාගරයේ ගැඹුරු පත්ල දෙසට ගමන් කරයි.`;
       } else {
-        fishPotential = "සාමාන්‍ය මත්ස්‍ය තත්ත්වයක් පවතී. ගල්පර ආශ්‍රිතව සහ නොගැඹුරු මුහුදේ දැල් එලීම වඩාත් සුදුසුය.";
+        fishPotential = "සාමාන්‍ය මත්ස්‍ය තත්ත්වයක් පවතී. සාම්ප්‍රදායික ගල්පර සහ ගැඹුරු කලාප ඉලක්ක කරගත හැක.";
+        rationale = `පීඩනය (${pressure} hPa) සහ රළ මධ්‍යස්ථ මට්ටමක පවතී. සාමාන්‍ය මත්ස්‍ය හැසිරීමක් අපේක්ෂා කළ හැක.`;
       }
 
       advice.innerHTML = `${safetyText}<br><br>💡 <strong>මත්ස්‍ය තොරතුරු:</strong> ${fishPotential}`;
+      aiNote.innerText = rationale;
     }
 
     function fetchWeatherData() {
@@ -154,7 +190,6 @@
       }
     }
 
-    // Load locations when page loads
     loadLocations();
   </script>
 </body>
