@@ -5,189 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ධීවර සහයක - Marine Fishing Assistant</title>
   
-  <!-- Leaflet CSS (Direct CDN) -->
+  <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
-
-  <style>
-    :root {
-      --primary: #0077b6;
-      --secondary: #0096c7;
-      --card-bg: #ffffff;
-      --bg: #f0f4f8;
-      --text: #1a202c;
-      --border: #e2e8f0;
-    }
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    }
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      padding: 16px;
-      line-height: 1.6;
-    }
-    .container {
-      max-width: 650px;
-      margin: 0 auto;
-    }
-    header {
-      text-align: center;
-      margin-bottom: 20px;
-      padding: 18px;
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      color: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    }
-    header h1 {
-      font-size: 1.5rem;
-      margin-bottom: 4px;
-    }
-    .card {
-      background: var(--card-bg);
-      padding: 20px;
-      border-radius: 12px;
-      margin-bottom: 16px;
-      border: 1px solid var(--border);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    }
-    label {
-      font-weight: 600;
-      display: block;
-      margin-bottom: 8px;
-    }
-    select, button {
-      width: 100%;
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      font-size: 1rem;
-      margin-bottom: 10px;
-    }
-    button {
-      background-color: var(--primary);
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      border: none;
-      transition: background 0.2s;
-    }
-    button:hover {
-      background-color: #023e8a;
-    }
-    .location-btn {
-      background-color: #38a169;
-    }
-    .location-btn:hover {
-      background-color: #2f855a;
-    }
-    .map-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-    .map-header h3 {
-      font-size: 1.05rem;
-      color: #1e293b;
-    }
-    .map-badge {
-      background: #e0f2fe;
-      color: #0369a1;
-      font-size: 0.75rem;
-      padding: 4px 8px;
-      border-radius: 12px;
-      font-weight: 600;
-    }
-    .data-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 14px;
-    }
-    .data-box {
-      background: #f8fafc;
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      text-align: center;
-    }
-    .data-box h3 {
-      font-size: 0.85rem;
-      color: #64748b;
-      margin-bottom: 4px;
-    }
-    .data-box p {
-      font-size: 1.3rem;
-      font-weight: bold;
-      color: var(--primary);
-    }
-    .status-badge {
-      display: inline-block;
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 0.9rem;
-      font-weight: bold;
-      margin-top: 8px;
-    }
-    .status-safe { background: #c6f6d5; color: #22543d; }
-    .status-warning { background: #feebc8; color: #744210; }
-    .status-danger { background: #fed7d7; color: #742a2a; }
-    .advice-box {
-      margin-top: 14px;
-      padding: 14px;
-      background: #ebf8ff;
-      border-left: 4px solid var(--secondary);
-      border-radius: 4px;
-      font-size: 0.95rem;
-    }
-    .ai-justification {
-      margin-top: 14px;
-      padding: 12px;
-      background: #fdf6b2;
-      border-left: 4px solid #d97706;
-      border-radius: 4px;
-      font-size: 0.88rem;
-      color: #78350f;
-    }
-    .info-card h3 {
-      font-size: 1.05rem;
-      color: #1e293b;
-      margin-bottom: 8px;
-    }
-    .info-list {
-      padding-left: 18px;
-      font-size: 0.9rem;
-      color: #475569;
-    }
-    .info-list li {
-      margin-bottom: 6px;
-    }
-    .reliability-text {
-      font-size: 0.9rem;
-      color: #334155;
-      background: #f1f5f9;
-      padding: 10px;
-      border-radius: 6px;
-      margin-top: 8px;
-    }
-    footer {
-      text-align: center;
-      margin-top: 24px;
-      padding: 16px;
-      color: #64748b;
-      font-size: 0.95rem;
-    }
-    footer strong {
-      color: var(--primary);
-    }
-    .hidden {
-      display: none;
-    }
-  </style>
+  <!-- External CSS -->
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
@@ -198,18 +19,20 @@
 
     <div class="card">
       <label for="areaSelect">ප්‍රදේශය තෝරන්න:</label>
-      <select id="areaSelect"></select>
+      <select id="areaSelect">
+        <option value="">ප්‍රදේශ පූරණය වෙමින් පවතී...</option>
+      </select>
       <button onclick="fetchWeatherData()">තොරතුරු ලබාගන්න</button>
       <button class="location-btn" onclick="getMyLocation()">📍 මගේ වත්මන් ස්ථානය බලන්න (Live GPS)</button>
     </div>
 
-    <!-- Live Marine Map (Inline Height යොදා ඇත) -->
+    <!-- Live Marine Map -->
     <div class="card">
       <div class="map-header">
         <h3>🗺️ සජීවී සමුද්‍ර සිතියම (Live Marine Map)</h3>
         <span class="map-badge" id="mapBadge">සජීවී සිතියම</span>
       </div>
-      <div id="map" style="width: 100%; height: 320px; border-radius: 10px; border: 1px solid var(--border); background-color: #e5e7eb;"></div>
+      <div id="map"></div>
     </div>
 
     <!-- Results Section -->
@@ -241,6 +64,12 @@
         <p id="adviceText">දත්ත පරීක්ෂා කරමින්...</p>
       </div>
 
+      <!-- අස්වැන්න සහ මත්ස්‍ය විශේෂ -->
+      <div class="species-box" id="speciesSection">
+        <strong>🎯 අපේක්ෂිත මත්ස්‍ය විශේෂ සහ අස්වනු අනාවැකිය:</strong>
+        <p id="speciesText">විශ්ලේෂණය කරමින්...</p>
+      </div>
+
       <div class="ai-justification">
         <h4>🤖 AI සහ ඇල්ගොරිතම ක්‍රියාකාරීත්වය (AI Justification Note):</h4>
         <p id="aiNoteText">දත්ත විශ්ලේෂණය අනුව මෙහි සටහන දැක්වේ.</p>
@@ -252,12 +81,12 @@
       <ul class="info-list">
         <li><strong>Open-Meteo Marine API:</strong> Copernicus Marine Service සහ ECMWF ආකෘති මඟින් සපයන රළ උස සහ මුහුදු තත්ත්ව දත්ත.</li>
         <li><strong>Open-Meteo Weather API:</strong> ජාත්‍යන්තර චන්ද්‍රිකා මඟින් සපයන සුළං වේගය, උෂ්ණත්වය සහ පීඩනය.</li>
-        <li><strong>Solunar & Barometric Feeding Models:</strong> වායුගෝලීය පීඩනය මත මසුන්ගේ ආහාර සෙවීමේ චර්යාවන් (Feeding Activity) තක්සේරු කරන ජීව-විද්‍යාත්මක ආකෘති.</li>
+        <li><strong>Solunar & Barometric Models:</strong> වායු පීඩනය සහ උෂ්ණත්වය මත මසුන්ගේ අස්වනු සහ ආහාර සෙවීමේ චර්යාවන් තක්සේරු කරන ආකෘති.</li>
       </ul>
 
       <h3 style="margin-top: 15px;">⚠️ මෙය කොපමණ දුරට විශ්වාස කළ හැකිද? (Reliability)</h3>
       <p class="reliability-text">
-        <strong>විශ්වසනීයත්වය ~ 80% - 85%:</strong> කාලගුණ, සුළං සහ රළ දත්ත චන්ද්‍රිකා මඟින් නිරන්තරයෙන් යාවත්කාලීන වන බැවින් ඉහළ නිරවද්‍යතාවයකින් යුක්ත වේ. මසුන් ගැවසීම ජල ධාරා සහ ප්ලවාංග මතද රඳා පවතින බැවින් මෙය මඟපෙන්වීමක් ලෙස සලකන්න.
+        <strong>විශ්වසනීයත්වය ~ 80% - 85%:</strong> කාලගුණ සහ රළ දත්ත චන්ද්‍රිකා මඟින් නිරන්තරයෙන් යාවත්කාලීන වන බැවින් ඉහළ නිරවද්‍යතාවයකින් යුක්ත වේ. මසුන් ගැවසීම ජල ධාරා සහ ප්ලවාංග මතද රඳා පවතින බැවින් මෙය මඟපෙන්වීමක් ලෙස සලකන්න.
       </p>
     </div>
 
@@ -271,91 +100,61 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
   
   <script>
-    const coastalLocations = [
-      { name: "කොළඹ / මීගමුව අවට (Western Coast)", lat: 6.9271, lon: 79.8612 },
-      { name: "ගාල්ල / මාතර අවට (Southern Coast)", lat: 6.0535, lon: 80.2210 },
-      { name: "ත්‍රිකුණාමලය අවට (Eastern Coast)", lat: 8.5874, lon: 81.2152 },
-      { name: "යාපනය / පේදුරුතුඩුව (Northern Coast)", lat: 9.6615, lon: 80.0255 },
-      { name: "මඩකලපුව / වාකරේ අවට", lat: 7.7170, lon: 81.7000 },
-      { name: "හම්බන්තොට / තංගල්ල අවට", lat: 6.1248, lon: 81.1185 },
-      { name: "කල්පිටිය / පුත්තලම අවට (North-West)", lat: 8.0362, lon: 79.8283 }
-    ];
-
     let map = null;
     let marker = null;
     let circle = null;
 
     function initMap() {
-      if (typeof L === 'undefined') {
-        console.error("Leaflet library load වී නැත.");
-        return;
-      }
-
+      if (typeof L === 'undefined') return;
+      if (map !== null) return;
       map = L.map('map', { attributionControl: false }).setView([7.8731, 80.7718], 7);
-
-      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 18
-      }).addTo(map);
-
-      // Render issue එක වැළැක්වීමට අනිවාර්ය Timeout
-      setTimeout(() => {
-        if (map) map.invalidateSize();
-      }, 400);
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }).addTo(map);
+      setTimeout(() => { if (map) map.invalidateSize(); }, 400);
     }
 
     function updateMapLocation(lat, lon, status) {
       if (!map) return;
-
       map.invalidateSize();
       map.flyTo([lat, lon], 9, { duration: 1 });
 
-      const colorMap = {
-        safe: '#10b981',
-        warning: '#f59e0b',
-        danger: '#ef4444'
-      };
+      const colorMap = { safe: '#10b981', warning: '#f59e0b', danger: '#ef4444' };
       const themeColor = colorMap[status] || '#0077b6';
 
       if (marker) map.removeLayer(marker);
       if (circle) map.removeLayer(circle);
 
-      circle = L.circle([lat, lon], {
-        color: themeColor,
-        fillColor: themeColor,
-        fillOpacity: 0.3,
-        radius: 12000
-      }).addTo(map);
-
-      marker = L.circleMarker([lat, lon], {
-        radius: 10,
-        fillColor: themeColor,
-        color: '#ffffff',
-        weight: 3,
-        opacity: 1,
-        fillOpacity: 1
-      }).addTo(map);
-
+      circle = L.circle([lat, lon], { color: themeColor, fillColor: themeColor, fillOpacity: 0.3, radius: 12000 }).addTo(map);
+      marker = L.circleMarker([lat, lon], { radius: 10, fillColor: themeColor, color: '#ffffff', weight: 3, opacity: 1, fillOpacity: 1 }).addTo(map);
       marker.bindPopup(`<b>කලාපය:</b> Lat: ${lat}, Lon: ${lon}`).openPopup();
     }
 
-    function setupLocations() {
-      const select = document.getElementById('areaSelect');
-      select.innerHTML = '';
-
-      coastalLocations.forEach(loc => {
-        const opt = document.createElement('option');
-        opt.value = `${loc.lat},${loc.lon}`;
-        opt.textContent = loc.name;
-        select.appendChild(opt);
-      });
-
+    async function loadLocations() {
       initMap();
-      fetchWeatherData();
+      try {
+        const res = await fetch('locations.json');
+        const locations = await res.json();
+        const select = document.getElementById('areaSelect');
+        select.innerHTML = '';
+        
+        locations.forEach(loc => {
+          const opt = document.createElement('option');
+          opt.value = `${loc.lat},${loc.lon}`;
+          opt.textContent = loc.name;
+          select.appendChild(opt);
+        });
+
+        fetchWeatherData();
+      } catch (err) {
+        console.error("Error loading locations.json:", err);
+        // Fallback default
+        getWeatherData(6.9271, 79.8612);
+      }
     }
 
     async function getWeatherData(lat, lon) {
       document.getElementById('resultCard').classList.remove('hidden');
       document.getElementById('adviceText').innerText = "දත්ත විශ්ලේෂණය කෙරේ...";
+      document.getElementById('speciesText').innerText = "විශ්ලේෂණය කරමින්...";
 
       try {
         const marineUrl = `https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&current=wave_height,wave_period&timezone=auto`;
@@ -385,43 +184,41 @@
     function evaluateConditions(wave, wind, pressure, temp, lat, lon) {
       const badge = document.getElementById('safetyBadge');
       const advice = document.getElementById('adviceText');
+      const speciesText = document.getElementById('speciesText');
       const aiNote = document.getElementById('aiNoteText');
 
       let safetyText = "";
       let status = "safe";
+      let catchPotential = "";
+      let targetSpecies = "";
 
       if (wave > 2.5 || wind > 35) {
         status = "danger";
         badge.className = "status-badge status-danger";
         badge.innerText = "⚠️ මුහුද අනතුරුදායකයි";
         safetyText = "මුහුද රළු බැවින් කුඩා යාත්‍රා සඳහා මුහුදු යාම සුදුසු නැත.";
+        catchPotential = "අස්වැන්න: ඉතා අවමයි (මුහුදු යාම අනතුරුදායකයි)";
+        targetSpecies = "කිසිදු මත්ස්‍ය විශේෂයක් ඉලක්ක කර මුහුදු යාමෙන් වළකින්න.";
       } else if (wave > 1.5 || wind > 25) {
         status = "warning";
         badge.className = "status-badge status-warning";
         badge.innerText = "⚠️ සැලකිලිමත් වන්න";
         safetyText = "මුහුද මධ්‍යස්ථ ලෙස රළු විය හැක. ආරක්ෂිත ක්‍රමවේද අනුගමනය කරන්න.";
+        catchPotential = "අස්වැන්න: මධ්‍යස්ථ මට්ටමක පවතී";
+        targetSpecies = "ගල්පර ආශ්‍රිත මසුන් (ගල් මාලු, පරාවව්) සහ නොගැඹුරු මුහුදු මසුන්.";
       } else {
         status = "safe";
         badge.className = "status-badge status-safe";
         badge.innerText = "✅ ආරක්ෂිතයි";
         safetyText = "මුහුදු යාම සඳහා කාලගුණය ඉතා හිතකරය.";
+        catchPotential = "අස්වැන්න: ඉහළ අස්වැන්නක් අපේක්ෂා කළ හැක 🌟";
+        targetSpecies = "මතුපිට මසුන්: බලයා (Skipjack Tuna), කෙලවල්ලා (Yellowfin Tuna), තෝරා (Seer Fish) සහ හුරුළු/සාලයා.";
       }
 
-      let fishPotential = "";
-      let rationale = "";
+      let rationale = `වායු පීඩනය (${pressure} hPa) සහ රළ උස මීටර් ${wave} ක මට්ටමක පැවතීම නිසා මසුන්ගේ ආහාර සෙවීමේ චර්යාවන් මැනවින් තක්සේරු කර ඇත.`;
 
-      if (pressure >= 1008 && pressure <= 1014 && wave <= 1.8) {
-        fishPotential = "පීඩනය සහ උෂ්ණත්වය මත්ස්‍ය ආහාර සෙවීමට බෙහෙවින් හිතකරයි. මතුපිට සහ මැද කලාපවල මසුන් ගැවසීමේ ඉඩකඩ ඉහළයි.";
-        rationale = `වායු පීඩනය (${pressure} hPa) ස්ථාවරව පවතින අතර රළ උස මීටර් ${wave} කි. මසුන්ගේ පිහිනුම් මුත්‍රාශයේ පීඩනය සමතුලිත බැවින් උන් මතුපිටට පැමිණීමේ සම්භාවිතාව ඉහළයි.`;
-      } else if (pressure < 1008) {
-        fishPotential = "අඩු පීඩන තත්ත්වයක් පවතී. මසුන් ගැඹුරු ආරක්ෂිත කලාප වෙත පසුබැසීමට ඉඩ ඇත.";
-        rationale = `පීඩනය පහත වැටීම (${pressure} hPa) හේතුවෙන් මසුන් ගැඹුරු පත්ල දෙසට ගමන් කරයි.`;
-      } else {
-        fishPotential = "සාමාන්‍ය මත්ස්‍ය තත්ත්වයක් පවතී. සාම්ප්‍රදායික ගල්පර ආශ්‍රිත කලාප ඉලක්ක කරගත හැක.";
-        rationale = `පීඩනය (${pressure} hPa) සහ රළ මධ්‍යස්ථ මට්ටමක පවතී. සාමාන්‍ය මත්ස්‍ය හැසිරීමක් අපේක්ෂා කළ හැක.`;
-      }
-
-      advice.innerHTML = `${safetyText}<br><br>💡 <strong>මත්ස්‍ය තොරතුරු:</strong> ${fishPotential}`;
+      advice.innerHTML = `${safetyText}`;
+      speciesText.innerHTML = `<strong>${catchPotential}</strong><br>බහුලව ගැවසෙන විශේෂ: ${targetSpecies}`;
       aiNote.innerText = rationale;
 
       updateMapLocation(lat, lon, status);
@@ -441,12 +238,11 @@
           () => alert("ස්ථානය ලබා ගැනීමට නොහැකි විය. කරුණාකර GPS සක්‍රිය කරන්න.")
         );
       } else {
-        alert("ඔබගේ බ්‍රවුසරය මඟින් GPS පහසුකම සහාය නොදක්වයි.");
+        alert("ඔබගේ බ්‍රවුසරය මඟින් GPS සහාය නොදක්වයි.");
       }
     }
 
-    // Load after DOM is ready
-    window.addEventListener('load', setupLocations);
+    window.addEventListener('load', loadLocations);
   </script>
 </body>
 </html>
