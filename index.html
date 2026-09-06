@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ධීවර සහයක - Marine Fishing Assistant</title>
   
-  <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
-  <!-- External CSS -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -26,7 +24,6 @@
       <button class="location-btn" onclick="getMyLocation()">📍 මගේ වත්මන් ස්ථානය බලන්න (Live GPS)</button>
     </div>
 
-    <!-- Live Marine Map -->
     <div class="card">
       <div class="map-header">
         <h3>🗺️ සජීවී සමුද්‍ර සිතියම (Live Marine Map)</h3>
@@ -35,7 +32,6 @@
       <div id="map"></div>
     </div>
 
-    <!-- Results Section -->
     <div id="resultCard" class="card hidden">
       <h2>සමුද්‍ර තත්ත්ව වාර්තාව</h2>
       <div id="safetyBadge" class="status-badge"></div>
@@ -64,7 +60,6 @@
         <p id="adviceText">දත්ත පරීක්ෂා කරමින්...</p>
       </div>
 
-      <!-- අස්වැන්න සහ මත්ස්‍ය විශේෂ -->
       <div class="species-box" id="speciesSection">
         <strong>🎯 අපේක්ෂිත මත්ස්‍ය විශේෂ සහ අස්වනු අනාවැකිය:</strong>
         <p id="speciesText">විශ්ලේෂණය කරමින්...</p>
@@ -96,7 +91,6 @@
     </footer>
   </div>
 
-  <!-- Leaflet JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
   
   <script>
@@ -146,7 +140,6 @@
         fetchWeatherData();
       } catch (err) {
         console.error("Error loading locations.json:", err);
-        // Fallback default
         getWeatherData(6.9271, 79.8612);
       }
     }
