@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ධීවර සහයක - Marine Fishing Assistant</title>
   
-  <!-- Leaflet CSS (සිතියම් මෝස්තර) -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-  
+  <!-- Leaflet CSS (Direct CDN) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+
   <style>
     :root {
       --primary: #0077b6;
@@ -84,11 +84,6 @@
     .location-btn:hover {
       background-color: #2f855a;
     }
-
-    /* සිතියම සඳහා CSS - උස අනිවාර්ය කර ඇත */
-    .map-card {
-      padding: 14px;
-    }
     .map-header {
       display: flex;
       justify-content: space-between;
@@ -107,16 +102,6 @@
       border-radius: 12px;
       font-weight: 600;
     }
-    #map {
-      width: 100%;
-      height: 320px;
-      min-height: 320px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      background-color: #aad3df; /* සාගර පසුබිම් වර්ණය */
-      z-index: 10;
-    }
-
     .data-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -151,7 +136,6 @@
     .status-safe { background: #c6f6d5; color: #22543d; }
     .status-warning { background: #feebc8; color: #744210; }
     .status-danger { background: #fed7d7; color: #742a2a; }
-
     .advice-box {
       margin-top: 14px;
       padding: 14px;
@@ -214,20 +198,18 @@
 
     <div class="card">
       <label for="areaSelect">ප්‍රදේශය තෝරන්න:</label>
-      <select id="areaSelect">
-        <!-- JavaScript මඟින් නගර එක් කරනු ලැබේ -->
-      </select>
+      <select id="areaSelect"></select>
       <button onclick="fetchWeatherData()">තොරතුරු ලබාගන්න</button>
       <button class="location-btn" onclick="getMyLocation()">📍 මගේ වත්මන් ස්ථානය බලන්න (Live GPS)</button>
     </div>
 
-    <!-- Live Map -->
-    <div class="card map-card">
+    <!-- Live Marine Map (Inline Height යොදා ඇත) -->
+    <div class="card">
       <div class="map-header">
         <h3>🗺️ සජීවී සමුද්‍ර සිතියම (Live Marine Map)</h3>
-        <span class="map-badge" id="mapBadge">කලාපය සලකුණු කර ඇත</span>
+        <span class="map-badge" id="mapBadge">සජීවී සිතියම</span>
       </div>
-      <div id="map"></div>
+      <div id="map" style="width: 100%; height: 320px; border-radius: 10px; border: 1px solid var(--border); background-color: #e5e7eb;"></div>
     </div>
 
     <!-- Results Section -->
@@ -275,7 +257,7 @@
 
       <h3 style="margin-top: 15px;">⚠️ මෙය කොපමණ දුරට විශ්වාස කළ හැකිද? (Reliability)</h3>
       <p class="reliability-text">
-        <strong>විශ්වසනීයත්වය ~ 80% - 85%:</strong> කාලගුණ, සුළං සහ රළ දත්ත චන්ද්‍රිකා මඟින් නිරන්තරයෙන් යාවත්කාලීන වන බැවින් ඉහළ නිරවද්‍යතාවයකින් යුක්ත වේ. මසුන් ගැවසීම ජල ධාරා සහ ප්ලවාංග මතද රඳා පවතින බැවින් මෙය මඟපෙන්වීමක් ලෙස පමණක් සලකන්න.
+        <strong>විශ්වසනීයත්වය ~ 80% - 85%:</strong> කාලගුණ, සුළං සහ රළ දත්ත චන්ද්‍රිකා මඟින් නිරන්තරයෙන් යාවත්කාලීන වන බැවින් ඉහළ නිරවද්‍යතාවයකින් යුක්ත වේ. මසුන් ගැවසීම ජල ධාරා සහ ප්ලවාංග මතද රඳා පවතින බැවින් මෙය මඟපෙන්වීමක් ලෙස සලකන්න.
       </p>
     </div>
 
@@ -285,11 +267,10 @@
     </footer>
   </div>
 
-  <!-- Leaflet JS (සිතියම් Script) -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <!-- Leaflet JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
   
   <script>
-    // ප්‍රදේශ ලැයිස්තුව කේතය තුළටම ඇතුළත් කර ඇත (CORS Error වැළැක්වීමට)
     const coastalLocations = [
       { name: "කොළඹ / මීගමුව අවට (Western Coast)", lat: 6.9271, lon: 79.8612 },
       { name: "ගාල්ල / මාතර අවට (Southern Coast)", lat: 6.0535, lon: 80.2210 },
@@ -306,30 +287,27 @@
 
     function initMap() {
       if (typeof L === 'undefined') {
-        console.error("Leaflet library එක load වී නැත. අන්තර්ජාල සම්බන්ධතාවය පරීක්ෂා කරන්න.");
+        console.error("Leaflet library load වී නැත.");
         return;
       }
 
-      // ශ්‍රී ලංකාව කේන්ද්‍ර කර සිතියම පිහිටුවීම
-      map = L.map('map').setView([7.8731, 80.7718], 7);
+      map = L.map('map', { attributionControl: false }).setView([7.8731, 80.7718], 7);
 
-      // OpenStreetMap Tiles
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 18,
-        attribution: '&copy; OpenStreetMap contributors'
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18
       }).addTo(map);
 
-      // සිතියම සම්පූර්ණයෙන්ම සකස් වීම තහවුරු කරයි
+      // Render issue එක වැළැක්වීමට අනිවාර්ය Timeout
       setTimeout(() => {
         if (map) map.invalidateSize();
-      }, 300);
+      }, 400);
     }
 
     function updateMapLocation(lat, lon, status) {
       if (!map) return;
 
       map.invalidateSize();
-      map.flyTo([lat, lon], 9, { duration: 1.2 });
+      map.flyTo([lat, lon], 9, { duration: 1 });
 
       const colorMap = {
         safe: '#10b981',
@@ -341,25 +319,23 @@
       if (marker) map.removeLayer(marker);
       if (circle) map.removeLayer(circle);
 
-      // කලාපය දැක්වෙන වෘත්තය
       circle = L.circle([lat, lon], {
         color: themeColor,
         fillColor: themeColor,
-        fillOpacity: 0.25,
+        fillOpacity: 0.3,
         radius: 12000
       }).addTo(map);
 
-      // සලකුණ (Marker)
       marker = L.circleMarker([lat, lon], {
         radius: 10,
         fillColor: themeColor,
         color: '#ffffff',
         weight: 3,
         opacity: 1,
-        fillOpacity: 0.9
+        fillOpacity: 1
       }).addTo(map);
 
-      marker.bindPopup(`<b>තෝරාගත් කලාපය</b><br>Lat: ${lat}<br>Lon: ${lon}`).openPopup();
+      marker.bindPopup(`<b>කලාපය:</b> Lat: ${lat}, Lon: ${lon}`).openPopup();
     }
 
     function setupLocations() {
@@ -469,8 +445,8 @@
       }
     }
 
-    // පිටුව සූදානම් වූ පසු ක්‍රියාත්මක වීම
-    window.onload = setupLocations;
+    // Load after DOM is ready
+    window.addEventListener('load', setupLocations);
   </script>
 </body>
 </html>
