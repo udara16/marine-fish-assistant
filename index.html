@@ -4,126 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ධීවර සහයක - Fishing Assistant</title>
-  <style>
-    :root {
-      --primary: #0077b6;
-      --secondary: #0096c7;
-      --card-bg: #ffffff;
-      --bg: #f0f4f8;
-      --text: #1a202c;
-      --border: #e2e8f0;
-    }
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    }
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      padding: 16px;
-      line-height: 1.5;
-    }
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-    }
-    header {
-      text-align: center;
-      margin-bottom: 20px;
-      padding: 16px;
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      color: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-    }
-    header h1 {
-      font-size: 1.5rem;
-      margin-bottom: 4px;
-    }
-    .card {
-      background: var(--card-bg);
-      padding: 18px;
-      border-radius: 12px;
-      margin-bottom: 16px;
-      border: 1px solid var(--border);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-    label {
-      font-weight: 600;
-      display: block;
-      margin-bottom: 8px;
-    }
-    select, button {
-      width: 100%;
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      font-size: 1rem;
-      margin-bottom: 10px;
-    }
-    button {
-      background-color: var(--primary);
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      border: none;
-      transition: background 0.2s;
-    }
-    button:hover {
-      background-color: #023e8a;
-    }
-    .location-btn {
-      background-color: #48bb78;
-    }
-    .location-btn:hover {
-      background-color: #38a169;
-    }
-    .data-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 12px;
-    }
-    .data-box {
-      background: #f8fafc;
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      text-align: center;
-    }
-    .data-box h3 {
-      font-size: 0.85rem;
-      color: #64748b;
-      margin-bottom: 4px;
-    }
-    .data-box p {
-      font-size: 1.25rem;
-      font-weight: bold;
-      color: var(--primary);
-    }
-    .status-badge {
-      display: inline-block;
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 0.9rem;
-      font-weight: bold;
-      margin-top: 8px;
-    }
-    .status-safe { background: #c6f6d5; color: #22543d; }
-    .status-warning { background: #feebc8; color: #744210; }
-    .status-danger { background: #fed7d7; color: #742a2a; }
-    .advice-box {
-      margin-top: 12px;
-      padding: 12px;
-      background: #ebf8ff;
-      border-left: 4px solid var(--secondary);
-      border-radius: 4px;
-      font-size: 0.95rem;
-    }
-    .hidden { display: none; }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
@@ -135,13 +16,7 @@
     <div class="card">
       <label for="areaSelect">ප්‍රදේශය තෝරන්න:</label>
       <select id="areaSelect">
-        <option value="6.9271,79.8612">කොළඹ / මීගමුව අවට</option>
-        <option value="6.0535,80.2210">ගාල්ල / මාතර අවට</option>
-        <option value="8.5874,81.2152">ත්‍රිකුණාමලය අවට</option>
-        <option value="9.6615,80.0255">යාපනය / පේදුරුතුඩුව</option>
-        <option value="7.7170,81.7000">මඩකලපුව අවට</option>
-        <option value="6.1248,81.1185">හම්බන්තොට අවට</option>
-        <option value="8.0362,79.8283">කල්පිටිය / පුත්තලම</option>
+        <option value="">ප්‍රදේශ පූරණය වෙමින් පවතී...</option>
       </select>
       <button onclick="fetchWeatherData()">තොරතුරු ලබාගන්න</button>
       <button class="location-btn" onclick="getMyLocation()">📍 මගේ වත්මන් ස්ථානය බලන්න</button>
@@ -178,14 +53,34 @@
   </div>
 
   <script>
+    // Load locations from JSON file
+    async function loadLocations() {
+      try {
+        const res = await fetch('locations.json');
+        const locations = await res.json();
+        const select = document.getElementById('areaSelect');
+        select.innerHTML = '';
+        
+        locations.forEach(loc => {
+          const opt = document.createElement('option');
+          opt.value = `${loc.lat},${loc.lon}`;
+          opt.textContent = loc.name;
+          select.appendChild(opt);
+        });
+
+        // Load initial data
+        fetchWeatherData();
+      } catch (err) {
+        console.error("Error loading locations:", err);
+      }
+    }
+
     async function getWeatherData(lat, lon) {
       document.getElementById('resultCard').classList.remove('hidden');
       document.getElementById('adviceText').innerText = "දත්ත විශ්ලේෂණය කෙරේ...";
 
       try {
-        // Marine API - Wave & Wind data
         const marineUrl = `https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&current=wave_height,wave_period&timezone=auto`;
-        // General Weather API - Wind speed, Surface pressure & Temp
         const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,surface_pressure&timezone=auto`;
 
         const [marineRes, weatherRes] = await Promise.all([
@@ -214,9 +109,7 @@
       const advice = document.getElementById('adviceText');
 
       let safetyText = "";
-      let adviceText = "";
 
-      // Sea Safety Evaluation
       if (wave > 2.5 || wind > 35) {
         badge.className = "status-badge status-danger";
         badge.innerText = "⚠️ මුහුද අනතුරුදායකයි";
@@ -231,8 +124,6 @@
         safetyText = "මුහුදු යාම සඳහා කාලගුණය ඉතා හිතකරය.";
       }
 
-      // Fish Probability Heuristic
-      // Stable/rising pressure (around 1010-1015 hPa) and moderate sea temperature indicates better fish feeding activity
       let fishPotential = "";
       if (pressure >= 1008 && pressure <= 1015 && wave <= 1.8) {
         fishPotential = "පීඩනය සහ උෂ්ණත්වය මත්ස්‍ය ආහාර සෙවීමට බෙහෙවින් හිතකරයි. ගැඹුරු මුහුදේ සහ මතුපිට මසුන් (Pelagic) ගැවසීමේ සම්භාවිතාව ඉහළයි.";
@@ -247,7 +138,9 @@
 
     function fetchWeatherData() {
       const coords = document.getElementById('areaSelect').value.split(',');
-      getWeatherData(coords[0], coords[1]);
+      if (coords.length === 2) {
+        getWeatherData(coords[0], coords[1]);
+      }
     }
 
     function getMyLocation() {
@@ -261,8 +154,8 @@
       }
     }
 
-    // Load default on start
-    fetchWeatherData();
+    // Load locations when page loads
+    loadLocations();
   </script>
 </body>
 </html>
