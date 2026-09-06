@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ධීවර සහයක - Marine Fishing Assistant</title>
+  <!-- Leaflet Map CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -21,6 +23,15 @@
       </select>
       <button onclick="fetchWeatherData()">තොරතුරු ලබාගන්න</button>
       <button class="location-btn" onclick="getMyLocation()">📍 මගේ වත්මන් ස්ථානය බලන්න (Live GPS)</button>
+    </div>
+
+    <!-- ආකර්ෂණීය සිතියම (Interactive Ocean Map) -->
+    <div class="card map-card">
+      <div class="map-header">
+        <h3>🗺️ සජීවී සමුද්‍ර සිතියම (Live Marine Map)</h3>
+        <span class="map-badge" id="mapBadge">කලාපය සලකුණු කර ඇත</span>
+      </div>
+      <div id="map"></div>
     </div>
 
     <!-- තත්ත්ව වාර්තාව -->
@@ -64,16 +75,13 @@
       <h3>📊 ගණනය කිරීමට පාදක වූ මූලාශ්‍ර (Data Sources)</h3>
       <ul class="info-list">
         <li><strong>Open-Meteo Marine API:</strong> යුරෝපීය සහ ජාත්‍යන්තර සාගර ආකෘති (ECMWF, Copernicus Marine Service) මඟින් සපයන රළ උස සහ මුහුදු තත්ත්ව දත්ත.</li>
-        <li><strong>Open-Meteo Weather API:</strong> ජාත්‍යන්තර කාලගුණ විද්‍යා චන්ද්‍රිකා සහ සංඛ්‍යාත්මක ආකෘති මඟින් ලබාගන්නා සුළඟේ වේගය, උෂ්ණත්වය සහ වායුගෝලීය පීඩනය.</li>
-        <li><strong>Solunar & Barometric Fish Feeding Models:</strong> වායුගෝලීය පීඩන විචලනයන් සහ ජල උෂ්ණත්වය මත මසුන්ගේ ආහාර ගැනීමේ චර්යාවන් (Feeding Activity) තක්සේරු කරන ජීව-විද්‍යාත්මක ආකෘති.</li>
+        <li><strong>Open-Meteo Weather API:</strong> චන්ද්‍රිකා සහ සංඛ්‍යාත්මක ආකෘති මඟින් සපයන සුළං වේගය, උෂ්ණත්වය සහ වායුගෝලීය පීඩනය.</li>
+        <li><strong>Solunar & Barometric Fish Feeding Models:</strong> වායුගෝලීය පීඩනය මත මසුන්ගේ ආහාර ගැනීමේ චර්යාවන් (Feeding Activity) තක්සේරු කරන ජීව-විද්‍යාත්මක ආකෘති.</li>
       </ul>
 
       <h3 style="margin-top: 15px;">⚠️ මෙය කොපමණ දුරට විශ්වාස කළ හැකිද? (Reliability)</h3>
       <p class="reliability-text">
-        <strong>විශ්වසනීයත්වය ~ 80% - 85%:</strong> කාලගුණ, සුළං සහ රළ පිළිබඳ දත්ත චන්ද්‍රිකා සහ සාගර බෝයාවන් (Buoys) හරහා නිරන්තරයෙන් යාවත්කාලීන වන බැවින් කාලගුණික අවදානම ඉහළ නිරවද්‍යතාවයකින් යුක්ත වේ. කෙසේ වෙතත්, මසුන් ගැවසීම ජල ධාරා (Ocean Currents), ප්ලවාංග (Chlorophyll) සහ ජලයේ ගැඹුර මත ද රඳා පවතින බැවින් මෙය මඟපෙන්වීමක් (Guideline) ලෙස පමණක් සලකන්න.
-      </p>
-      <p class="disclaimer-text">
-        <em>* හදිසි කාලගුණ විපර්යාස වලදී ශ්‍රී ලංකා කාලගුණ විද්‍යා දෙපාර්තමේන්තුව සහ නාරා (NARA) ආයතනය නිකුත් කරන නිල උපදෙස් අනුගමනය කරන්න.</em>
+        <strong>විශ්වසනීයත්වය ~ 80% - 85%:</strong> කාලගුණ, සුළං සහ රළ දත්ත චන්ද්‍රිකා මඟින් නිරන්තරයෙන් යාවත්කාලීන වන බැවින් ඉහළ නිරවද්‍යතාවයකින් යුක්ත වේ. මසුන් ගැවසීම ජල ධාරා සහ ප්ලවාංග මතද රඳා පවතින බැවින් මෙය මඟපෙන්වීමක් ලෙස සලකන්න.
       </p>
     </div>
 
@@ -83,7 +91,62 @@
     </footer>
   </div>
 
+  <!-- Leaflet JS Script -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
+    let map, marker, circle;
+
+    // Initialize Map with dark ocean/tactical style
+    function initMap() {
+      map = L.map('map', {
+        zoomControl: true,
+        attributionControl: false
+      }).setView([7.8731, 80.7718], 7);
+
+      // CartoDB Voyager / Ocean style tiles
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        maxZoom: 18
+      }).addTo(map);
+    }
+
+    function updateMapLocation(lat, lon, status) {
+      if (!map) return;
+
+      map.flyTo([lat, lon], 9, {
+        animate: true,
+        duration: 1.5
+      });
+
+      const colorMap = {
+        safe: '#10b981',
+        warning: '#f59e0b',
+        danger: '#ef4444'
+      };
+      const themeColor = colorMap[status] || '#0077b6';
+
+      if (marker) map.removeLayer(marker);
+      if (circle) map.removeLayer(circle);
+
+      // Glowing Zone Circle
+      circle = L.circle([lat, lon], {
+        color: themeColor,
+        fillColor: themeColor,
+        fillOpacity: 0.2,
+        radius: 12000
+      }).addTo(map);
+
+      // Custom Pulsing Div Icon
+      const pulseIcon = L.divIcon({
+        className: 'custom-map-pin',
+        html: `<div class="pulse-marker" style="--pulse-color: ${themeColor};"></div>`,
+        iconSize: [24, 24],
+        iconAnchor: [12, 12]
+      });
+
+      marker = L.marker([lat, lon], { icon: pulseIcon }).addTo(map);
+      marker.bindPopup(`<b>තෝරාගත් කලාපය</b><br>Lat: ${lat}, Lon: ${lon}`).openPopup();
+    }
+
     async function loadLocations() {
       try {
         const res = await fetch('locations.json');
@@ -98,6 +161,7 @@
           select.appendChild(opt);
         });
 
+        initMap();
         fetchWeatherData();
       } catch (err) {
         console.error("Error loading locations:", err);
@@ -127,28 +191,32 @@
         document.getElementById('seaTemp').innerText = `${temp} °C`;
         document.getElementById('pressure').innerText = `${pressure} hPa`;
 
-        evaluateConditions(wave, wind, pressure, temp);
+        evaluateConditions(wave, wind, pressure, temp, lat, lon);
       } catch (error) {
         document.getElementById('adviceText').innerText = "දත්ත ලබා ගැනීමට නොහැකි විය. අන්තර්ජාල සම්බන්ධතාව පරීක්ෂා කරන්න.";
       }
     }
 
-    function evaluateConditions(wave, wind, pressure, temp) {
+    function evaluateConditions(wave, wind, pressure, temp, lat, lon) {
       const badge = document.getElementById('safetyBadge');
       const advice = document.getElementById('adviceText');
       const aiNote = document.getElementById('aiNoteText');
 
       let safetyText = "";
+      let status = "safe";
 
       if (wave > 2.5 || wind > 35) {
+        status = "danger";
         badge.className = "status-badge status-danger";
         badge.innerText = "⚠️ මුහුද අනතුරුදායකයි";
         safetyText = "මුහුද රළු බැවින් කුඩා යාත්‍රා සඳහා මුහුදු යාම සුදුසු නැත.";
       } else if (wave > 1.5 || wind > 25) {
+        status = "warning";
         badge.className = "status-badge status-warning";
         badge.innerText = "⚠️ සැලකිලිමත් වන්න";
         safetyText = "මුහුද මධ්‍යස්ථ ලෙස රළු විය හැක. ආරක්ෂිත ක්‍රමවේද අනුගමනය කරන්න.";
       } else {
+        status = "safe";
         badge.className = "status-badge status-safe";
         badge.innerText = "✅ ආරක්ෂිතයි";
         safetyText = "මුහුදු යාම සඳහා කාලගුණය ඉතා හිතකරය.";
@@ -159,10 +227,10 @@
 
       if (pressure >= 1008 && pressure <= 1014 && wave <= 1.8) {
         fishPotential = "පීඩනය සහ උෂ්ණත්වය මත්ස්‍ය ආහාර සෙවීමට බෙහෙවින් හිතකරයි. මතුපිට සහ මැද කලාපවල මසුන් ගැවසීමේ ඉඩකඩ ඉහළයි.";
-        rationale = `වායු පීඩනය (${pressure} hPa) ස්ථාවර මට්ටමක පවතින අතර රළ උස මීටර් ${wave} ක් පමණ වේ. මෙවැනි තත්ත්වවලදී මසුන්ගේ පාවෙන මුත්‍රාශයේ (Swim Bladder) පීඩනය සමතුලිතව පවතින බැවින් උන් බහුලව ආහාර සොයා මතුපිටට සහ මැද ස්ථරවලට පැමිණේ.`;
+        rationale = `වායු පීඩනය (${pressure} hPa) ස්ථාවරව පවතින අතර රළ උස මීටර් ${wave} කි. මසුන්ගේ පිහිනුම් මුත්‍රාශයේ පීඩනය සමතුලිත බැවින් උන් මතුපිටට පැමිණීමේ සම්භාවිතාව ඉහළයි.`;
       } else if (pressure < 1008) {
         fishPotential = "අඩු පීඩන තත්ත්වයක් පවතී. මසුන් ගැඹුරු ආරක්ෂිත කලාප වෙත පසුබැසීමට ඉඩ ඇත.";
-        rationale = `පීඩනය පහත වැටීම (${pressure} hPa) හේතුවෙන් කුණාටු සහිත ස්වභාවයක් ඇතිවිය හැකි අතර, මසුන් සාමාන්‍යයෙන් සාගරයේ ගැඹුරු පත්ල දෙසට ගමන් කරයි.`;
+        rationale = `පීඩනය පහත වැටීම (${pressure} hPa) හේතුවෙන් මසුන් ගැඹුරු පත්ල දෙසට ගමන් කරයි.`;
       } else {
         fishPotential = "සාමාන්‍ය මත්ස්‍ය තත්ත්වයක් පවතී. සාම්ප්‍රදායික ගල්පර සහ ගැඹුරු කලාප ඉලක්ක කරගත හැක.";
         rationale = `පීඩනය (${pressure} hPa) සහ රළ මධ්‍යස්ථ මට්ටමක පවතී. සාමාන්‍ය මත්ස්‍ය හැසිරීමක් අපේක්ෂා කළ හැක.`;
@@ -170,6 +238,9 @@
 
       advice.innerHTML = `${safetyText}<br><br>💡 <strong>මත්ස්‍ය තොරතුරු:</strong> ${fishPotential}`;
       aiNote.innerText = rationale;
+
+      // Update map marker with calculated safety status
+      updateMapLocation(lat, lon, status);
     }
 
     function fetchWeatherData() {
