@@ -248,6 +248,7 @@
       <button class="location-btn" onclick="getMyLocation()">📍 මගේ වත්මන් ස්ථානය බලන්න (Live GPS)</button>
     </div>
 
+    <!-- Live Marine Map -->
     <div class="card">
       <div class="map-header">
         <h3>🗺️ සජීවී සමුද්‍ර සිතියම (Live Marine Map)</h3>
@@ -256,6 +257,7 @@
       <div id="map"></div>
     </div>
 
+    <!-- Results Section -->
     <div id="resultCard" class="card hidden">
       <h2>සමුද්‍ර තත්ත්ව වාර්තාව</h2>
       <div id="safetyBadge" class="status-badge"></div>
@@ -291,6 +293,7 @@
         <p id="speciesText">විශ්ලේෂණය කරමින්...</p>
       </div>
 
+      <!-- ඉදිරි දින 7 ක අනාවැකි වගුව -->
       <div class="forecast-section" style="margin-top: 20px;">
         <h3>📅 ඉදිරි දින 7 ක කාලගුණ සහ මත්ස්‍ය අනාවැකිය (7-Day Forecast)</h3>
         <div class="table-responsive" style="overflow-x: auto; margin-top: 10px;">
@@ -332,7 +335,7 @@
 
     <footer>
       <p>Designed by <strong>Udara Dissanayake</strong></p>
-      <p style="font-size: 0.8rem; opacity: 0.8; margin-top: 4px;">ශ්‍රී ලාංකීය ධීවර ප්‍රජාව වෙනුවෙන් නිර්මාණය කරන ලදී.</p>
+      <p style="font-size: 0.8rem; opacity: 0.8; margin-top: 4px;">ශ්‍රී ලංකීය ධීවර ප්‍රජාව වෙනුවෙන් නිර්මාණය කරන ලදී.</p>
     </footer>
   </div>
 
@@ -521,10 +524,12 @@
     }
 
     function getMyLocation() {
+      alert("⚠️ නිවැරදි සාගර දත්ත සහ GPS සංඥා ලබා ගැනීම සඳහා කරුණාකර මුහුදු වෙරළට (Coastline) පැමිණ හෝ මුහුදේ සිට GPS සක්‍රිය කරන්න.");
+
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (pos) => getWeatherData(pos.coords.latitude, pos.coords.longitude),
-          () => alert("ස්ථානය ලබා ගැනීමට නොහැකි විය. කරුණාකර GPS සක්‍රිය කරන්න.")
+          () => alert("ස්ථානය ලබා ගැනීමට නොහැකි විය. කරුණාකර එළිමහනට පැමිණ GPS සක්‍රිය කරන්න.")
         );
       } else {
         alert("ඔබගේ බ්‍රවුසරය මඟින් GPS සහාය නොදක්වයි.");
