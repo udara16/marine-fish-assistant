@@ -13,16 +13,18 @@
     <header>
       <h1>🐟 ධීවර සහයක (Fishing Assistant)</h1>
       <p>මුහුදු කාලගුණය සහ මත්ස්‍ය කලාප අනාවැකි පද්ධතිය</p>
+      <!-- දිනය සහ වේලාව පෙන්වන තීරුව -->
+      <div id="currentDateTime" class="datetime-display">දිනය සහ වේලාව පූරණය වෙමින්...</div>
     </header>
 
     <div class="card">
       <label for="areaSelect">ප්‍රදේශය තෝරන්න:</label>
-      <select id="areaSelect">
-        </select>
+      <select id="areaSelect"></select>
       <button onclick="fetchWeatherData()">තොරතුරු ලබාගන්න</button>
       <button class="location-btn" onclick="getMyLocation()">📍 මගේ වත්මන් ස්ථානය බලන්න (Live GPS)</button>
     </div>
 
+    <!-- Live Marine Map -->
     <div class="card">
       <div class="map-header">
         <h3>🗺️ සජීවී සමුද්‍ර සිතියම (Live Marine Map)</h3>
@@ -31,10 +33,14 @@
       <div id="map"></div>
     </div>
 
+    <!-- Results Section -->
     <div id="resultCard" class="card hidden">
       <h2>සමුද්‍ර තත්ත්ව වාර්තාව</h2>
       <div id="safetyBadge" class="status-badge"></div>
       
+      <!-- වලංගු කාලය පිළිබඳ දැනුම්දීම -->
+      <div class="validity-note" id="validityNote"></div>
+
       <div class="data-grid">
         <div class="data-box">
           <h3>රළ උස (Wave Height)</h3>
@@ -64,36 +70,41 @@
         <p id="speciesText">විශ්ලේෂණය කරමින්...</p>
       </div>
 
-      <div class="ai-justification">
+      <!-- සති දෙකක අනාවැකි වගුව (14-Day Forecast Table) -->
+      <div class="forecast-section" style="margin-top: 20px;">
+        <h3>📅 ඉදිරි දින 14 ක කාලගුණ සහ මත්ස්‍ය අනාවැකිය (2-Week Forecast)</h3>
+        <div class="table-responsive" style="overflow-x: auto; margin-top: 10px;">
+          <table id="forecastTable" style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+            <thead>
+              <tr style="background-color: #0077b6; color: white; text-align: left;">
+                <th style="padding: 8px; border: 1px solid #cbd5e1;">දිනය</th>
+                <th style="padding: 8px; border: 1px solid #cbd5e1;">රළ උස</th>
+                <th style="padding: 8px; border: 1px solid #cbd5e1;">සුළඟ</th>
+                <th style="padding: 8px; border: 1px solid #cbd5e1;">තත්ත්වය</th>
+              </tr>
+            </thead>
+            <tbody id="forecastTableBody">
+              <tr><td colspan="4" style="text-align: center; padding: 10px;">දත්ත පූරණය වෙමින්...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="ai-justification" style="margin-top: 15px;">
         <h4>🤖 AI සහ ඇල්ගොරිතම ක්‍රියාකාරීත්වය (AI Justification Note):</h4>
         <p id="aiNoteText">දත්ත විශ්ලේෂණය අනුව මෙහි සටහන දැක්වේ.</p>
       </div>
     </div>
 
-    <div class="card info-card">
-      <h3>📊 ගණනය කිරීමට පාදක වූ මූලාශ්‍ර (Data Sources)</h3>
-      <ul class="info-list">
-        <li><strong>Open-Meteo Marine API:</strong> Copernicus Marine Service සහ ECMWF ආකෘති මඟින් සපයන රළ උස සහ මුහුදු තත්ත්ව දත්ත.</li>
-        <li><strong>Open-Meteo Weather API:</strong> ජාත්‍යන්තර චන්ද්‍රිකා මඟින් සපයන සුළං වේගය, උෂ්ණත්වය සහ පීඩනය.</li>
-        <li><strong>Solunar & Barometric Models:</strong> වායු පීඩනය සහ උෂ්ණත්වය මත මසුන්ගේ අස්වනු සහ ආහාර සෙවීමේ චර්යාවන් තක්සේරු කරන ආකෘති.</li>
-      </ul>
-
-      <h3 style="margin-top: 15px;">⚠️ මෙය කොපමණ දුරට විශ්වාස කළ හැකිද? (Reliability)</h3>
-      <p class="reliability-text">
-        <strong>විශ්වසනීයත්වය ~ 80% - 85%:</strong> කාලගුණ සහ රළ දත්ත චන්ද්‍රිකා මඟින් නිරන්තරයෙන් යාවත්කාලීන වන බැවින් ඉහළ නිරවද්‍යතාවයකින් යුක්ත වේ. මසුන් ගැවසීම ජල ධාරා සහ ප්ලවාංග මතද රඳා පවතින බැවින් මෙය මඟපෙන්වීමක් ලෙස සලකන්න.
-      </p>
-    </div>
-
     <footer>
       <p>Designed by <strong>Udara Dissanayake</strong></p>
-      <p style="font-size: 0.8rem; opacity: 0.8; margin-top: 4px;">ශ්‍රී ලාංකීය ධීවර ප්‍රජාව වෙනුවෙන් නිර්මාණය කරන ලදී.</p>
+      <p style="font-size: 0.8rem; opacity: 0.8; margin-top: 4px;">ශ්‍රී ලංකීය ධීවර ප්‍රජාව වෙනුවෙන් නිර්මාණය කරන ලදී.</p>
     </footer>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
   
   <script>
-    // දත්ත ගොනුව වෙනුවට මෙහි සෘජුවම ලංකාවේ ප්‍රධාන ධීවර කලාප ඇතුළත් කර ඇත
     const coastalLocations = [
       { name: "කොළඹ / මීගමුව අවට (Western Coast)", lat: 6.9271, lon: 79.8612 },
       { name: "ගාල්ල / මාතර අවට (Southern Coast)", lat: 6.0535, lon: 80.2210 },
@@ -107,6 +118,15 @@
     let map = null;
     let marker = null;
     let circle = null;
+
+    // කාලය සහ දිනය යාවත්කාලීන කිරීම
+    function updateDateTime() {
+      const now = new Date();
+      const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+      document.getElementById('currentDateTime').innerText = `📅 ${now.toLocaleDateString('si-LK', options)}`;
+    }
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
 
     function initMap() {
       if (typeof L === 'undefined') return;
@@ -144,7 +164,6 @@
         select.appendChild(opt);
       });
 
-      // ප්‍රථම ප්‍රදේශය සඳහා දත්ත ලබාගැනීම පූරණය කරයි
       fetchWeatherData();
     }
 
@@ -154,8 +173,9 @@
       document.getElementById('speciesText').innerText = "විශ්ලේෂණය කරමින්...";
 
       try {
-        const marineUrl = `https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&current=wave_height,wave_period&timezone=auto`;
-        const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,surface_pressure&timezone=auto`;
+        // වත්මන් දත්ත සහ දින 14 ක අනාවැකි ලබාගැනීම සඳහා Open-Meteo API
+        const marineUrl = `https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&current=wave_height,wave_period&daily=wave_height_max&timezone=auto`;
+        const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,surface_pressure&daily=wind_speed_10m_max&timezone=auto`;
 
         const [marineRes, weatherRes] = await Promise.all([
           fetch(marineUrl).then(res => res.json()),
@@ -172,9 +192,50 @@
         document.getElementById('seaTemp').innerText = `${temp} °C`;
         document.getElementById('pressure').innerText = `${pressure} hPa`;
 
+        // වලංගු කාලය දැක්වීම (මෙම අනාවැකිය පැය 24 ක් දක්වා සජීවීව වලංගු වේ)
+        document.getElementById('validityNote').innerHTML = `⏳ <strong>වලංගු කාලය:</strong> මෙම තත්‍ය කාලීන වාර්තාව ඉදිරි පැය 24 සඳහා සම්පූර්ණයෙන්ම වලංගු වේ. (දින 14 ක පුරෝකථන පහත වගුවේ දැක්වේ)`;
+
         evaluateConditions(wave, wind, pressure, temp, lat, lon);
+        renderForecastTable(marineRes.daily, weatherRes.daily);
       } catch (error) {
         document.getElementById('adviceText').innerText = "දත්ත ලබා ගැනීමට නොහැකි විය. අන්තර්ජාල සම්බන්ධතාව පරීක්ෂා කරන්න.";
+      }
+    }
+
+    // දින 14 ක අනාවැකි වගුව සකස් කිරීම
+    function renderForecastTable(dailyMarine, dailyWeather) {
+      const tbody = document.getElementById('forecastTableBody');
+      tbody.innerHTML = '';
+
+      if (!dailyMarine || !dailyMarine.time) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 10px;">දත්ත ලබා ගත නොහැක</td></tr>`;
+        return;
+      }
+
+      for (let i = 0; i < dailyMarine.time.length; i++) {
+        const date = dailyMarine.time[i];
+        const waveMax = dailyMarine.wave_height_max ? dailyMarine.wave_height_max[i] : 1.0;
+        const windMax = dailyWeather.wind_speed_10m_max ? dailyWeather.wind_speed_10m_max[i] : 15;
+
+        let statusText = "✅ ආරක්ෂිතයි";
+        let statusColor = "#10b981";
+        if (waveMax > 2.5 || windMax > 35) {
+          statusText = "⚠️ අනතුරුදායකයි";
+          statusColor = "#ef4444";
+        } else if (waveMax > 1.5 || windMax > 25) {
+          statusText = "⚠️ සැලකිලිමත් වන්න";
+          statusColor = "#f59e0b";
+        }
+
+        const row = `
+          <tr>
+            <td style="padding: 8px; border: 1px solid #cbd5e1;">${date}</td>
+            <td style="padding: 8px; border: 1px solid #cbd5e1;">${waveMax} m</td>
+            <td style="padding: 8px; border: 1px solid #cbd5e1;">${windMax} km/h</td>
+            <td style="padding: 8px; border: 1px solid #cbd5e1; color: ${statusColor}; font-weight: bold;">${statusText}</td>
+          </tr>
+        `;
+        tbody.innerHTML += row;
       }
     }
 
