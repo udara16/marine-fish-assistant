@@ -1,9 +1,184 @@
-[
-  { "name": "කොළඹ / මීගමුව අවට (Western Coast)", "lat": 6.9271, "lon": 79.8612 },
-  { "name": "ගාල්ල / මාතර අවට (Southern Coast)", "lat": 6.0535, "lon": 80.2210 },
-  { "name": "ත්‍රිකුණාමලය අවට (Eastern Coast)", "lat": 8.5874, "lon": 81.2152 },
-  { "name": "යාපනය / පේදුරුතුඩුව (Northern Coast)", "lat": 9.6615, "lon": 80.0255 },
-  { "name": "මඩකලපුව / වාකරේ අවට", "lat": 7.7170, "lon": 81.7000 },
-  { "name": "හම්බන්තොට / තංගල්ල අවට", "lat": 6.1248, "lon": 81.1185 },
-  { "name": "කල්පිටිය / පුත්තලම අවට (North-West)", "lat": 8.0362, "lon": 79.8283 }
-]
+let map = null;
+let marker = null;
+let circle = null;
+
+// Initialize Map
+function initMap() {
+  // සිතියම දැනටමත් සාදා ඇත්නම් නැවත සෑදීම වළක්වයි
+  if (map !== null) return;
+
+  // OpenStreetMap සම්මත සේවාදායකය භාවිතා කර ඇත (CORS දෝෂ මඟහරවා ගැනීමට)
+  map = L.map('map').setView([7.8731, 80.7718], 7);
+
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: '&copy; OpenStreetMap'
+  }).addTo(map);
+
+  // සිතියම සම්පූර්ණයෙන්ම Screen එකට Fit වීමට තත්පර 0.2කින් refresh කරයි
+  setTimeout(() => {
+    map.invalidateSize();
+  }, 200);
+}
+
+function updateMapLocation(lat, lon, status) {
+  if (!map) return;
+
+  // සිතියමේ ප්‍රමාණය නැවත සකසයි
+  map.invalidateSize();
+
+  map.flyTo([lat, lon], 9, {
+    animate: true,
+    duration: 1.2
+  });
+
+  const colorMap = {
+    safe: '#10b981',
+    warning: '#f59e0b',
+    danger: '#ef4444'
+  };
+  const themeColor = colorMap[status] || '#0077b6';
+
+  if (marker) map.removeLayer(marker);
+  if (circle) map.removeLayer(circle);
+
+  // Zone Circle
+  circle = L.circle([lat, lon], {
+    color: themeColor,
+    fillColor: themeColor,
+    fillOpacity: 0.25,
+    radius: 10000
+  }).addTo(map);
+
+  // Standard Leaflet CircleMarker (CSS Load නොවුණත් පැහැදිලිව පෙනේ)
+  marker = L.circleMarker([lat, lon], {
+    radius: 9,
+    fillColor: themeColor,
+    color: '#ffffff',
+    weight: 2,
+    opacity: 1,
+    fillOpacity: 0.9
+  }).addTo(map);
+
+  marker.bindPopup(`<b>තෝරාගත් කලාපය</b><br>Lat: ${lat}<br>Lon: ${lon}`).openPopup();
+}
+
+async function loadLocations() {
+  // සිතියම මුලින්ම සකසයි
+  initMap();
+
+  try {
+    const res = await fetch('locations.json');
+    const locations = await res.json();
+    const select = document.getElementById('areaSelect');
+    select.innerHTML = '';
+    
+    locations.forEach(loc => {
+      const opt = document.createElement('option');
+      opt.value = `${loc.lat},${loc.lon}`;
+      opt.textContent = loc.name;
+      select.appendChild(opt);
+    });
+
+    fetchWeatherData();
+  } catch (err) {
+    console.error("Locations Load කිරීමේ දෝෂයකි:", err);
+    // locations.json වැඩ නොකළහොත් Default එකක් Load කරයි
+    getWeatherData(6.9271, 79.8612);
+  }
+}
+
+async function getWeatherData(lat, lon) {
+  document.getElementById('resultCard').classList.remove('hidden');
+  document.getElementById('adviceText').innerText = "දත්ත විශ්ලේෂණය කෙරේ...";
+
+  try {
+    const marineUrl = `https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&current=wave_height,wave_period&timezone=auto`;
+    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,surface_pressure&timezone=auto`;
+
+    const [marineRes, weatherRes] = await Promise.all([
+      fetch(marineUrl).then(res => res.json()),
+      fetch(weatherUrl).then(res => res.json())
+    ]);
+
+    const wave = marineRes.current?.wave_height || 0.8;
+    const wind = weatherRes.current?.wind_speed_10m || 12;
+    const temp = weatherRes.current?.temperature_2m || 28;
+    const pressure = weatherRes.current?.surface_pressure || 1010;
+
+    document.getElementById('waveHeight').innerText = `${wave} m`;
+    document.getElementById('windSpeed').innerText = `${wind} km/h`;
+    document.getElementById('seaTemp').innerText = `${temp} °C`;
+    document.getElementById('pressure').innerText = `${pressure} hPa`;
+
+    evaluateConditions(wave, wind, pressure, temp, lat, lon);
+  } catch (error) {
+    document.getElementById('adviceText').innerText = "දත්ත ලබා ගැනීමට නොහැකි විය. අන්තර්ජාල සම්බන්ධතාව පරීක්ෂා කරන්න.";
+  }
+}
+
+function evaluateConditions(wave, wind, pressure, temp, lat, lon) {
+  const badge = document.getElementById('safetyBadge');
+  const advice = document.getElementById('adviceText');
+  const aiNote = document.getElementById('aiNoteText');
+
+  let safetyText = "";
+  let status = "safe";
+
+  if (wave > 2.5 || wind > 35) {
+    status = "danger";
+    badge.className = "status-badge status-danger";
+    badge.innerText = "⚠️ මුහුද අනතුරුදායකයි";
+    safetyText = "මුහුද රළු බැවින් කුඩා යාත්‍රා සඳහා මුහුදු යාම සුදුසු නැත.";
+  } else if (wave > 1.5 || wind > 25) {
+    status = "warning";
+    badge.className = "status-badge status-warning";
+    badge.innerText = "⚠️ සැලකිලිමත් වන්න";
+    safetyText = "මුහුද මධ්‍යස්ථ ලෙස රළු විය හැක. ආරක්ෂිත ක්‍රමවේද අනුගමනය කරන්න.";
+  } else {
+    status = "safe";
+    badge.className = "status-badge status-safe";
+    badge.innerText = "✅ ආරක්ෂිතයි";
+    safetyText = "මුහුදු යාම සඳහා කාලගුණය ඉතා හිතකරය.";
+  }
+
+  let fishPotential = "";
+  let rationale = "";
+
+  if (pressure >= 1008 && pressure <= 1014 && wave <= 1.8) {
+    fishPotential = "පීඩනය සහ උෂ්ණත්වය මත්ස්‍ය ආහාර සෙවීමට බෙහෙවින් හිතකරයි. මතුපිට සහ මැද කලාපවල මසුන් ගැවසීමේ ඉඩකඩ ඉහළයි.";
+    rationale = `වායු පීඩනය (${pressure} hPa) ස්ථාවරව පවතින අතර රළ උස මීටර් ${wave} කි. පිහිනුම් මුත්‍රාශයේ පීඩනය සමතුලිත බැවින් මසුන් මතුපිටට පැමිණීමේ ඉඩකඩ වැඩිය.`;
+  } else if (pressure < 1008) {
+    fishPotential = "අඩු පීඩන තත්ත්වයක් පවතී. මසුන් ගැඹුරු ආරක්ෂිත කලාප වෙත පසුබැසීමට ඉඩ ඇත.";
+    rationale = `පීඩනය පහත වැටීම (${pressure} hPa) හේතුවෙන් මසුන් ගැඹුරු පත්ල දෙසට ගමන් කරයි.`;
+  } else {
+    fishPotential = "සාමාන්‍ය මත්ස්‍ය තත්ත්වයක් පවතී. සාම්ප්‍රදායික ගල්පර ආශ්‍රිත ප්‍රදේශ ඉලක්ක කරගත හැක.";
+    rationale = `පීඩනය (${pressure} hPa) සහ රළ මධ්‍යස්ථ මට්ටමක පවතී. සාමාන්‍ය මත්ස්‍ය හැසිරීමක් අපේක්ෂා කළ හැක.`;
+  }
+
+  advice.innerHTML = `${safetyText}<br><br>💡 <strong>මත්ස්‍ය තොරතුරු:</strong> ${fishPotential}`;
+  aiNote.innerText = rationale;
+
+  updateMapLocation(lat, lon, status);
+}
+
+function fetchWeatherData() {
+  const coords = document.getElementById('areaSelect').value.split(',');
+  if (coords.length === 2) {
+    getWeatherData(coords[0], coords[1]);
+  }
+}
+
+function getMyLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => getWeatherData(pos.coords.latitude, pos.coords.longitude),
+      () => alert("ස්ථානය ලබා ගැනීමට නොහැකි විය. කරුණාකර GPS සක්‍රිය කරන්න.")
+    );
+  } else {
+    alert("ඔබගේ බ්‍රවුසරය මඟින් GPS සහාය නොදක්වයි.");
+  }
+}
+
+// පිටුව Load වූ පසු සිතියම සකසයි
+window.addEventListener('DOMContentLoaded', loadLocations);
